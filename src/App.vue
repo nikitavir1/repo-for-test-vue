@@ -4,6 +4,7 @@
     <router-link to="/about">About</router-link> |
     <router-link :to="{ name: 'References' }">References</router-link> |
     <router-link :to="{ name: 'ModalWindow' }">Modal</router-link> |
+    <router-link :to="{ name: 'Auto' }">Auto</router-link> |
   </div>
   <router-view />
 </template>

@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import Home from "../views/Home.vue";
 import References from "@/views/References.vue";
 import ModalWindow from "@/views/ModalWindow.vue";
+import Auto from "@/views/Auto.vue";
 
 const routes = [
   {
@@ -18,6 +19,11 @@ const routes = [
     path: "/modal",
     name: "ModalWindow",
     component: ModalWindow,
+  },
+  {
+    path: "/auto",
+    name: "Auto",
+    component: Auto,
   },
   {
     path: "/about",
