@@ -1,66 +1,60 @@
 <template>
-  <h1 class="text-center">Калькулятор авто</h1>
-  <div class="d-flex container">
-    <div class="col-4 row">
-      <label>Дата начала</label>
-      <input v-model="dateStart" class="col-8" type="date" />
+  <div class="bg-light py-4">
+    <h1 class="py-3 text-center">Калькулятор авто</h1>
+    <div class="d-flex justify-content-between container my-3">
+      <div class="col-3 row">
+        <label>Дата начала</label>
+        <input v-model="dateStart" class="form-control w-75" type="date" />
+      </div>
+      <div class="col-3 row">
+        <label>Дата конца</label>
+        <input v-model="dateEnd" class="form-control w-75" type="date" />
+      </div>
+      <div class="col-3 row">
+        <label>Желаемая машина</label>
+        <select v-model="selectedAuto" class="form-select mt-3 w-75">
+          <option disabled selected>Выберите авто</option>
+          <option v-for="(auto, index) in autos" :key="index" :value="auto">
+            {{ auto.name }}
+          </option>
+        </select>
+      </div>
+      <div class="col-3 d-grid">
+        <button
+          @click.prevent="calculateSum(selectedAuto)"
+          class="btn btn-outline-dark mb-2"
+        >
+          Расчитать
+        </button>
+        <button class="btn btn-secondary" @click.prevent="setInfoAboutAllAuto">
+          Расчитать все машины
+        </button>
+      </div>
     </div>
-    <div class="col-4 row">
-      <label>Дата конца</label>
-      <input v-model="dateEnd" class="col-8" type="date" />
-    </div>
-    <div class="col-2 ">
-      <select v-model="selectedAuto" class="mt-4">
-        <option disabled selected>Выберите авто</option>
-        <option v-for="(auto, index) in autos" :key="index" :value="auto">
-          {{ auto.name }}
-        </option>
-      </select>
-    </div>
-
-    <div class="col-2 ">
-      <button @click.prevent="calculateSum(selectedAuto)" class="mt-2 mb-2">
-        Расчитать
-      </button>
-      <button @click.prevent="setInfoAboutAllAuto">
-        Расчитать все машины
-      </button>
-    </div>
+    <transition name="fade">
+      <table v-if="showAllAutos.length > 0" class="table mt-3 container">
+        <thead>
+          <tr>
+            <th scope="col">Наимнование марки</th>
+            <th scope="col">Общая сумма</th>
+            <th scope="col">Количество дней</th>
+            <th scope="col">(рублей/сутки)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="auto in showAllAutos" :key="auto">
+            <td>{{ auto.name }}</td>
+            <td>{{ Number(auto.sum).toLocaleString() }} руб.</td>
+            <td>{{ auto.days }}</td>
+            <td>
+              {{ Number(auto.sumPerDay.toFixed(2)).toLocaleString() }}
+              (руб./сут.)
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </transition>
   </div>
-
-  <!-- <div class="d-flex container mt-3">
-    <div class="col-4 row">
-      {{ this.dateStart }}
-    </div>
-    <div class="col-4 row">
-      {{ dateEnd }}
-    </div>
-    <div class="col-2 ">
-      {{ selectedAuto }}
-    </div>
-    <div class="col-2 "></div>
-  </div> -->
-
-  <table v-if="showAllAutos" class="table mt-3 container">
-    <thead>
-      <tr>
-        <th scope="col">Наимнование марки</th>
-        <th scope="col">Общая сумма</th>
-        <th scope="col">Количество дней</th>
-        <th scope="col">(рублей/сутки)</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="auto in showAllAutos" :key="auto">
-        <td>{{ auto.name }}</td>
-        <td>{{ Number(auto.sum).toLocaleString() }} руб.</td>
-        <td>{{ auto.days }}</td>
-        <td>
-          {{ Number(auto.sumPerDay.toFixed(2)).toLocaleString() }} (руб./сут.)
-        </td>
-      </tr>
-    </tbody>
-  </table>
 </template>
 
 <script>
@@ -71,18 +65,6 @@ Date.prototype.daysInMonth = function() {
 export default {
   name: "Auto",
   methods: {
-    setInfoAboutAllAuto() {
-      this.showAllAutos = [];
-      for (let autoId in this.autos) {
-        let cals = this.calculateSum(this.autos[autoId]);
-        this.showAllAutos.push({
-          name: this.autos[autoId].name,
-          sum: cals.finalSum,
-          days: cals.days,
-          sumPerDay: Number(cals.finalSum / cals.days),
-        });
-      }
-    },
     calculateSum(auto) {
       let startDay = {
         year: new Date(this.dateStart).getFullYear(),
@@ -107,21 +89,18 @@ export default {
       else if (countDays >= 26) rate = 4;
       let objYearsCalc = {};
       let calendarOfDays = {
-        //лето
-        6: 30,
-        7: 31,
-        8: 31,
-        //осень
-        9: 30,
-        10: 31,
-        11: 30,
-        //весна и зима
-        12: 31,
         1: 31,
         2: 28,
         3: 31,
         4: 30,
         5: 31,
+        6: 30,
+        7: 31,
+        8: 31,
+        9: 30,
+        10: 31,
+        11: 30,
+        12: 31,
       };
       let seasonId = 0;
 
@@ -165,36 +144,42 @@ export default {
         } else if (endDay.year - startDay.year >= 1) {
           if (year == startDay.year) {
             for (let month = startDay.month; month <= 12; month++) {
-              let seasonId = this.chooseSeason(month);
               if (month == startDay.month) {
                 for (
                   let day = startDay.day;
                   day <= calendarOfDays[month];
                   day++
                 ) {
+                  seasonId = this.chooseSeason(month, day);
                   objYearsCalc[year].season[seasonId]++;
                 }
               } else {
-                objYearsCalc[year].season[seasonId] += calendarOfDays[month];
+                for (let day = 1; day <= calendarOfDays[month]; day++) {
+                  seasonId = this.chooseSeason(month, day);
+                  objYearsCalc[year].season[seasonId]++;
+                }
               }
             }
           } else if (year == endDay.year) {
             for (let month = 1; month <= endDay.month; month++) {
-              let seasonId = this.chooseSeason(month);
               if (month == endDay.month) {
                 for (let day = 1; day <= endDay.day; day++) {
-                  objYearsCalc[year].days++;
+                  seasonId = this.chooseSeason(month, day);
                   objYearsCalc[year].season[seasonId]++;
                 }
               } else {
-                objYearsCalc[year].season[seasonId] += calendarOfDays[month];
+                for (let day = 1; day <= calendarOfDays[month]; day++) {
+                  seasonId = this.chooseSeason(month, day);
+                  objYearsCalc[year].season[seasonId]++;
+                }
               }
             }
           } else {
-            if (this.isLeapYear(year)) {
-              objYearsCalc[year].season = [92, 91, 183];
-            } else {
-              objYearsCalc[year].season = [92, 91, 182];
+            for (let month = 1; month <= 12; month++) {
+              for (let day = 1; day <= calendarOfDays[month]; day++) {
+                seasonId = this.chooseSeason(month, day);
+                objYearsCalc[year].season[seasonId]++;
+              }
             }
           }
         }
@@ -206,12 +191,6 @@ export default {
         objYearsCalc[year].season.forEach((seasonDays, seasonId) => {
           finalSum = auto.prices[seasonId + 1][rate] * seasonDays;
           days += seasonDays;
-          console.log(
-            "season ",
-            seasonId + 1,
-            " sum ",
-            auto.prices[seasonId + 1][rate] * seasonDays
-          );
         });
         console.log(
           "Год:",
@@ -253,7 +232,7 @@ export default {
         }
       }
     },
-    makeDays() {
+    setSeasonsDay() {
       for (let id in this.seasons) {
         this.seasonsInDays[id] = {
           start: this.convertToDay(
@@ -268,24 +247,33 @@ export default {
           ),
         };
       }
-      console.log("this.seasonsInDays[", this.seasonsInDays);
     },
     convertToDay(date) {
       let now = new Date(String(date));
       let start = new Date(now.getFullYear(), 0, 0);
       return Math.floor((now - start) / (1000 * 60 * 60 * 24));
     },
+    setInfoAboutAllAuto() {
+      this.showAllAutos = [];
+      setTimeout(() => {
+        for (let autoId in this.autos) {
+          let cals = this.calculateSum(this.autos[autoId]);
+          this.showAllAutos.push({
+            name: this.autos[autoId].name,
+            sum: cals.finalSum,
+            days: cals.days,
+            sumPerDay: Number(cals.finalSum / cals.days),
+          });
+        }
+      }, 500);
+    },
   },
   mounted() {
-    this.makeDays();
-
-    console.log("chooseSeason", this.chooseSeason(9, 2));
-
-    console.log("KSFJFKLSD:", new Date("01.06").daysInMonth());
+    this.setSeasonsDay();
+    console.log("daysInMonth:", new Date("01.06").daysInMonth());
   },
   data() {
     return {
-      seasonsInDays: {},
       seasons: {
         1: {
           name: "Период А",
@@ -305,7 +293,7 @@ export default {
         4: {
           name: "Период Г",
           start: "11.12",
-          end: "30.05",
+          end: "31.05",
         },
       },
       autos: {
@@ -343,7 +331,20 @@ export default {
       dateStart: "",
       dateEnd: "",
       showAllAutos: [],
+      seasonsInDays: {},
+      show: false,
     };
   },
 };
 </script>
+
+<style>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
