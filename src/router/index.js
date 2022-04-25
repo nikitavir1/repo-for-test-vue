@@ -3,6 +3,7 @@ import Home from "../views/Home.vue";
 import References from "@/views/References.vue";
 import ModalWindow from "@/views/ModalWindow.vue";
 import Auto from "@/views/Auto.vue";
+import CheckJQuery from "@/views/CheckJQuery.vue";
 
 const routes = [
   {
@@ -24,6 +25,11 @@ const routes = [
     path: "/auto",
     name: "Auto",
     component: Auto,
+  },
+  {
+    path: "/jquery",
+    name: "CheckJQuery",
+    component: CheckJQuery,
   },
   {
     path: "/about",

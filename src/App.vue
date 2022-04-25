@@ -5,6 +5,7 @@
     <router-link :to="{ name: 'References' }">References</router-link> |
     <router-link :to="{ name: 'ModalWindow' }">Modal</router-link> |
     <router-link :to="{ name: 'Auto' }">Auto</router-link> |
+    <router-link :to="{ name: 'CheckJQuery' }">CheckJQuery</router-link> |
   </div>
   <router-view />
 </template>
