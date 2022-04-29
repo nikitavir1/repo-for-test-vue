@@ -4,6 +4,7 @@ import References from "@/views/References.vue";
 import ModalWindow from "@/views/ModalWindow.vue";
 import Auto from "@/views/Auto.vue";
 import CheckJQuery from "@/views/CheckJQuery.vue";
+import Schedule from "@/views/Schedule.vue";
 
 const routes = [
   {
@@ -30,6 +31,11 @@ const routes = [
     path: "/jquery",
     name: "CheckJQuery",
     component: CheckJQuery,
+  },
+  {
+    path: "/schedule",
+    name: "Schedule",
+    component: Schedule,
   },
   {
     path: "/about",

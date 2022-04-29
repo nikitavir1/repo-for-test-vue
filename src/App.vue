@@ -6,6 +6,7 @@
     <router-link :to="{ name: 'ModalWindow' }">Modal</router-link> |
     <router-link :to="{ name: 'Auto' }">Auto</router-link> |
     <router-link :to="{ name: 'CheckJQuery' }">CheckJQuery</router-link> |
+    <router-link :to="{ name: 'Schedule' }">Schedule</router-link> |
   </div>
   <router-view />
 </template>
