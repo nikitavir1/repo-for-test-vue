@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <head>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="newScript.js"></script>
+
+  <!-- Bootstrap CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+    crossorigin="anonymous"
+  />
 </head>
 <html>
   <body>
@@ -9,10 +18,69 @@
 
     <p id="demo"></p>
 
+    <div class="container">
+      <div class="row new-block"></div>
+    </div>
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+
     <script>
-      $(document).ready(() => {
-        console.log("JQUERY");
+      let items = "";
+      for (let i = 0; i < 11; i++) {
+        items += "<li>" + i + "</li>";
+      }
+      document.getElementById("demo").innerHTML = items;
+
+      fetch("https://jsonplaceholder.typicode.com/posts", {
+        method: "GET",
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      })
+        .then((response) => response.json())
+        .then((posts) => {
+          posts.splice(0, 60);
+          // console.log(posts);
+
+          let innerPosts = "";
+          for (let index in posts) {
+            innerPosts += `
+            <div class="col-3 text-sm-center card" 
+              id="post-${posts[index].id}"
+              data-index="${index}"
+            >
+              <div class="d-flex justify-content-between p-3">
+                <p class="text-muted">№${posts[index].id}</p>
+                <button class="md-end btn btn-close" name="delete"></button>
+              </div>
+              <p class="h3 text-uppercase">${posts[index].title}</p>
+              <p>${posts[index].body}</p>
+            </div>
+            `;
+          }
+
+          $(".new-block").html(innerPosts);
+        });
+
+      $(document).on("click", "button", function() {
+        let methodName = $(this).attr("name");
+        let item = $(this)
+          .closest(".card")
+          .data();
+
+        if (methodName == "delete") {
+          $(this)
+            .closest(".card")
+            .remove();
+        }
       });
+
+      console.log();
     </script>
   </body>
 </html>

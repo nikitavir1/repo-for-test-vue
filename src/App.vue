@@ -7,6 +7,8 @@
     <router-link :to="{ name: 'Auto' }">Auto</router-link> |
     <router-link :to="{ name: 'CheckJQuery' }">CheckJQuery</router-link> |
     <router-link :to="{ name: 'Schedule' }">Schedule</router-link> |
+
+    <router-link :to="{ name: 'AllItemsList' }">AllItems</router-link> |
   </div>
   <router-view />
 </template>
