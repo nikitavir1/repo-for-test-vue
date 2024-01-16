@@ -9,6 +9,7 @@ import Schedule from "@/views/Schedule.vue";
 import AllItemsList from "@/views/items/AllItemsList.vue";
 import AllItemsRender from "@/views/items/AllItemsRender.vue";
 import GeneralPage from "@/views/items/GeneralPage.vue";
+import JSONConverter from "@/views/items/JSONConverter.vue";
 
 const routes = [
   {
@@ -40,6 +41,11 @@ const routes = [
     path: "/schedule",
     name: "Schedule",
     component: Schedule,
+  },
+  {
+    path: "/jsom-converter",
+    name: "JSONConverter",
+    component: JSONConverter,
   },
 
   {
